@@ -1,13 +1,13 @@
 # Application settings
-TITLE = "IITRPR CVPR Lab - Image Processing"
+TITLE = "IITRPR CVPR Lab - SAMUDRA"
 DESCRIPTION = """
 Upload an image and apply various machine learning models to transform it.
 You can select multiple models to apply simultaneously and compare their results side by side.
 """
 
 # Header settings
-HEADER_TITLE = "IIT Ropar CVPR Lab"
-HEADER_SUBTITLE = "Underwater Image Processing"
+HEADER_TITLE = "SAMUDRA"
+HEADER_SUBTITLE = "Dive Deeper, See Clearer"
 
 # Footer settings
 FOOTER_TEXT = "© 2025 IIT Ropar CVPR Lab. All rights reserved."

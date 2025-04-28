@@ -6,11 +6,6 @@ from PIL import Image # <-- Import Pillow
 def render_header():
     """Render the application header."""
     col1, col2 = st.columns([1, 3])
-
-    # Assuming 'assets' folder is at the same level as your main app script
-    # e.g., /home/ace/Work/CVPRLab/website/app.py
-    #       /home/ace/Work/CVPRLab/website/assets/iitrpr_logo.png
-    #       /home/ace/Work/CVPRLab/website/components/header.py
     logo_path = "assets/iitrpr_logo.png"
 
     with col1:
