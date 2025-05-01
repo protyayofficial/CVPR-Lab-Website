@@ -64,5 +64,4 @@ dist/
 *.log
 logs/
 
-outputs/
-temp/
+__pycache__/

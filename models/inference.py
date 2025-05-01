@@ -3,18 +3,24 @@ import torch
 import numpy as np
 from PIL import Image
 import torchvision.transforms as transforms
-from models.model_loader import load_model
-from utils.image_utils import preprocess_image, postprocess_image
+from models.model_loader import load_model, load_detection_model
 from config import OUTPUT_DIR
 import uuid
+    
+def run_spectroformer(input_tensor, model):
+    final_l = model(input_tensor)[0]
+    final_l = final_l.detach().squeeze(0).cpu()
+    
+    return final_l
 
-def process_image(input_image, model_id):
+def process_image(input_image, model_id, output_dir=OUTPUT_DIR):
     """
     Process an input image with the specified model.
 
     Args:
         input_image (PIL.Image): Input image to process
         model_id (str): Model identifier
+        output_dir (str): Directory to save the output image
 
     Returns:
         str: Path to the saved output image
@@ -22,12 +28,12 @@ def process_image(input_image, model_id):
     try:
         # Generate a unique filename for the output
         output_filename = f"{model_id}_{uuid.uuid4().hex}.png"
-        output_path = os.path.join(OUTPUT_DIR, output_filename)
+        output_path = os.path.join(output_dir, output_filename)
 
         # Load the model
         print(f"Loading model: {model_id}")
         model = load_model(model_id)
-        model.eval() # Set model to evaluation mode
+        model.eval()
 
         # Device configuration
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -129,27 +135,70 @@ def process_image(input_image, model_id):
 
         raise Exception(f"Error during inference for model {model_id}: {str(e)}")
 
-    
-def run_spectroformer(input_tensor, model):
-    final_l = model(input_tensor)[0]
-    final_l = final_l.detach().squeeze(0).cpu()
-    
-    return final_l
 
-def simulate_style_transfer(input_tensor, model):
-    """Simulate a style transfer output for demonstration."""
-    # This is a placeholder for actual style transfer implementation
-    # In a real app, you would use your trained style transfer model here
-    output = model(input_tensor)['out'][0]
-    # Normalize to [0, 1] range for visualization
-    output = (output - output.min()) / (output.max() - output.min())
-    return output
+def apply_detection(enhanced_image_path, detection_model_id):
+    """
+    Apply object detection to an enhanced image.
 
-def simulate_super_resolution(input_tensor, model):
-    """Simulate a super resolution output for demonstration."""
-    # This is a placeholder for actual super resolution implementation
-    # In a real app, you would use your trained super resolution model here
-    output = model(input_tensor)['out'][0]
-    # Normalize to [0, 1] range for visualization
-    output = (output - output.min()) / (output.max() - output.min())
-    return output
+    Args:
+        enhanced_image_path (str): Path to enhanced image
+        detection_model_id (str): Detection model identifier
+        
+    Returns:
+        str: Path to the saved output image with detection results
+    """
+    
+    try:
+        # Load the enhanced image
+        enhanced_image = Image.open(enhanced_image_path)  # Fixed typo from 'opne' to 'open'
+        
+        output_filename = f"{detection_model_id}_{uuid.uuid4().hex}.png"
+        output_path = os.path.join(OUTPUT_DIR, output_filename)
+        
+        # Load the detection model
+        print(f"Loading detection model: {detection_model_id}")
+        detection_model = load_detection_model(detection_model_id)
+        
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        print(f"Using device: {device}")
+        
+        # Perform detection
+        with torch.no_grad():
+            if detection_model_id == "fish_detection":
+                print("Running fish detection...")
+                yolo_outputs = detection_model.predict(enhanced_image)
+                output = yolo_outputs[0]
+                boxes = output.boxes
+                names = output.names
+                
+                # Print detection results
+                for j in range(len(boxes)):
+                    label = names[boxes.cls[j].item()]
+                    coordinates = boxes.xyxy[j].tolist()
+                    confidence = np.round(boxes.conf[j].item(), 2)
+
+                    print(f'Fish {j + 1} is: {label}')
+                    print(f'Coordinates are: {coordinates}')
+                    print(f'Confidence is: {confidence}')
+                    print('-------')
+
+                # Get the annotated image (BGR to RGB)
+                annotated_image = output.plot()[:, :, ::-1]
+                
+                # Convert numpy array to PIL Image
+                output_image = Image.fromarray(annotated_image)
+                
+            else:
+                raise ValueError(f"Detection not implemented for model: {detection_model_id}")
+        
+        # Save the final output image
+        if output_image:
+            print(f"Saving output image with detections to: {output_path}")
+            output_image.save(output_path)
+            return output_path
+        else:
+            raise RuntimeError(f"Output image was not generated for detection model {detection_model_id}.")
+    
+    except Exception as e:
+        print(f"Error during detection for model {detection_model_id}: {str(e)}")
+        raise Exception(f"Error during detection for model {detection_model_id}: {str(e)}")

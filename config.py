@@ -12,12 +12,19 @@ HEADER_SUBTITLE = "Dive Deeper, See Clearer"
 # Footer settings
 FOOTER_TEXT = "© 2025 IIT Ropar CVPR Lab. All rights reserved."
 
-# Models configuration
-AVAILABLE_MODELS = {
+# Enhancement Models configuration
+ENHANCEMENT_MODELS = {
     "Spectroformer: Underwater Image Enhancement": "spectroformer",
-    "Phaseformer: Underwater Image Restoration and Beyond UIEB Dataset": "phaseformer",
+    "Phaseformer: Underwater Image Restoration": "phaseformer",
+}
+
+# Detection Models configuration (applied after enhancement)
+DETECTION_MODELS = {
+    "Fish Detection": "fish_detection",
+    # "Coral Detection": "coral_detection",
 }
 
 # Paths
 TEMP_DIR = "temp"
 OUTPUT_DIR = "outputs"
+ENHANCED_DIR = "enhanced"  # Directory for storing enhanced images before detection

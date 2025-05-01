@@ -2,6 +2,7 @@ import os
 import sys # <-- Import sys
 import torch
 import streamlit as st
+from ultralytics import YOLO
 
 models_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -9,7 +10,7 @@ models_dir = os.path.dirname(os.path.abspath(__file__))
 @st.cache_resource
 def load_model(model_id):
     """
-    Load a PyTorch model based on the model identifier.
+    Load a PyTorch enhancement model based on the model identifier.
 
     Args:
         model_id (str): Identifier of the model to load
@@ -47,30 +48,46 @@ def load_model(model_id):
             return phaseformer
 
         else:
-            raise ValueError(f"Unknown model identifier: {model_id}")
-
-    except ModuleNotFoundError as e:
-         # Add more specific error logging
-         print(f"Caught ModuleNotFoundError during torch.load: {e}")
-         print(f"Current sys.path: {sys.path}")
-         print("This usually means the model checkpoint was saved expecting the module")
-         print(f"'{e.name}' to be available as a top-level module.")
-         print(f"Tried adding '{models_dir}' to sys.path.")
-         raise Exception(f"Failed to load model {model_id} due to missing module definition: {str(e)}")
+            raise ValueError(f"Unknown enhancement model identifier: {model_id}")
+            
     except Exception as e:
-        # General error
-        import traceback
-        print(f"Generic error loading model {model_id}:")
-        traceback.print_exc()
-        raise Exception(f"Failed to load model {model_id}: {str(e)}")
-    finally:
-        # --- Clean up sys.path ---
-        if added_path:
-            try:
-                sys.path.remove(models_dir)
-                print(f"Removed {models_dir} from sys.path")
-            except ValueError:
-                pass # Should not happen if added_path is True, but be safe
-        # -------------------------
+        raise Exception(f"Failed to load enhancement model {model_id}: {str(e)}")
+    
+@st.cache_resource
+def load_detection_model(model_id):
+    """
+    Load a PyTorch detection model based on the model identifier.
 
+    Args:
+        model_id (str): Identifier of the model to load
 
+    Returns:
+        torch.nn.Module: Loaded PyTorch model
+    """
+    original_sys_path = list(sys.path) # Store original path
+    if models_dir not in sys.path:
+        print(f"Temporarily adding {models_dir} to sys.path for torch.load")
+        sys.path.insert(0, models_dir)
+        added_path = True
+    else:
+        added_path = False
+    # ---------------------------------------
+
+    try:
+        # Check if CUDA is available
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+        if model_id == "fish_detection":
+            fish_model = YOLO("models/checkpoints/fish_yolov8.pt")
+            fish_model.to(device)
+            fish_model.eval()
+            return fish_model
+        
+        elif model_id == "coral_detection":
+            pass
+
+        else:
+            raise ValueError(f"Unknown enhancement model identifier: {model_id}")
+            
+    except Exception as e:
+        raise Exception(f"Failed to load enhancement model {model_id}: {str(e)}")
