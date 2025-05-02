@@ -78,7 +78,7 @@ def load_detection_model(model_id):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         if model_id == "fish_detection":
-            fish_model = YOLO("models/checkpoints/fish_yolov8.pt")
+            fish_model = YOLO("models/checkpoints/fish_yolov11.pt")
             fish_model.to(device)
             fish_model.eval()
             return fish_model
