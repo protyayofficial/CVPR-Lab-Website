@@ -16,6 +16,7 @@ FOOTER_TEXT = "© 2025 IIT Ropar CVPR Lab. All rights reserved."
 ENHANCEMENT_MODELS = {
     "Spectroformer: Underwater Image Enhancement": "spectroformer",
     "Phaseformer: Underwater Image Restoration": "phaseformer",
+    "Fish Detector": "fish_detector",
 }
 
 # Detection Models configuration (applied after enhancement)

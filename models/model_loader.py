@@ -46,6 +46,12 @@ def load_model(model_id):
             phaseformer.to(device)
             phaseformer.eval()
             return phaseformer
+        
+        elif model_id == "fish_detector":
+            fish_model = YOLO("models/checkpoints/fish_yolov11.pt")
+            fish_model.to(device)
+            fish_model.eval()
+            return fish_model
 
         else:
             raise ValueError(f"Unknown enhancement model identifier: {model_id}")
