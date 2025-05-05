@@ -133,3 +133,4 @@ def display_results(input_image, selected_enhancement_models, selected_detection
                     
                     except Exception as e:
                         st.error(f"Error applying {detection_model_name} to enhanced image: {str(e)}")
+

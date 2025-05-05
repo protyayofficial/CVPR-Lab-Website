@@ -17,12 +17,13 @@ ENHANCEMENT_MODELS = {
     "Spectroformer: Underwater Image Enhancement": "spectroformer",
     "Phaseformer: Underwater Image Restoration": "phaseformer",
     "Fish Detector": "fish_detector",
+    "Coral Detector": "coral_detector",
 }
 
 # Detection Models configuration (applied after enhancement)
 DETECTION_MODELS = {
     "Fish Detection": "fish_detection",
-    # "Coral Detection": "coral_detection",
+    "Coral Detection": "coral_detection",
 }
 
 # Paths

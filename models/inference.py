@@ -122,29 +122,55 @@ def process_image(input_image, model_id, output_dir=OUTPUT_DIR):
             
         elif model_id == "fish_detector":
             with torch.no_grad():
-                    print("Running fish detection...")
-                    # input_tensor = Image.open(input_image)
-                    yolo_outputs = model.predict(input_image)
-                    output = yolo_outputs[0]
-                    boxes = output.boxes
-                    names = output.names
-                    
-                    # Print detection results
-                    for j in range(len(boxes)):
-                        label = names[boxes.cls[j].item()]
-                        coordinates = boxes.xyxy[j].tolist()
-                        confidence = np.round(boxes.conf[j].item(), 2)
+                print("Running fish detection...")
+                # input_tensor = Image.open(input_image)
+                yolo_outputs = model.predict(input_image)
+                output = yolo_outputs[0]
+                boxes = output.boxes
+                names = output.names
+                
+                # Print detection results
+                for j in range(len(boxes)):
+                    label = names[boxes.cls[j].item()]
+                    coordinates = boxes.xyxy[j].tolist()
+                    confidence = np.round(boxes.conf[j].item(), 2)
 
-                        print(f'Fish {j + 1} is: {label}')
-                        print(f'Coordinates are: {coordinates}')
-                        print(f'Confidence is: {confidence}')
-                        print('-------')
+                    print(f'Fish {j + 1} is: {label}')
+                    print(f'Coordinates are: {coordinates}')
+                    print(f'Confidence is: {confidence}')
+                    print('-------')
 
-                    # Get the annotated image (BGR to RGB)
-                    annotated_image = output.plot()[:, :, ::-1]
-                    
-                    # Convert numpy array to PIL Image
-                    output_image = Image.fromarray(annotated_image)
+                # Get the annotated image (BGR to RGB)
+                annotated_image = output.plot()[:, :, ::-1]
+                
+                # Convert numpy array to PIL Image
+                output_image = Image.fromarray(annotated_image)
+                
+        elif model_id == "coral_detector":
+            with torch.no_grad():
+                print("Running coral detection...")
+                # input_tensor = Image.open(input_image)
+                yolo_outputs = model.predict(input_image)
+                output = yolo_outputs[0]
+                boxes = output.boxes
+                names = output.names
+                
+                # Print detection results
+                for j in range(len(boxes)):
+                    label = names[boxes.cls[j].item()]
+                    coordinates = boxes.xyxy[j].tolist()
+                    confidence = np.round(boxes.conf[j].item(), 2)
+
+                    print(f'Coral {j + 1} is: {label}')
+                    print(f'Coordinates are: {coordinates}')
+                    print(f'Confidence is: {confidence}')
+                    print('-------')
+
+                # Get the annotated image (BGR to RGB)
+                annotated_image = output.plot()[:, :, ::-1]
+                
+                # Convert numpy array to PIL Image
+                output_image = Image.fromarray(annotated_image)
 
         else:
             raise ValueError(f"Inference not implemented for model: {model_id}")
@@ -205,6 +231,31 @@ def apply_detection(enhanced_image_path, detection_model_id):
                     confidence = np.round(boxes.conf[j].item(), 2)
 
                     print(f'Fish {j + 1} is: {label}')
+                    print(f'Coordinates are: {coordinates}')
+                    print(f'Confidence is: {confidence}')
+                    print('-------')
+
+                # Get the annotated image (BGR to RGB)
+                annotated_image = output.plot()[:, :, ::-1]
+                
+                # Convert numpy array to PIL Image
+                output_image = Image.fromarray(annotated_image)
+                
+            elif detection_model_id == "coral_detection":
+                print("Running coral detection...")
+                # input_tensor = Image.open(input_image)
+                yolo_outputs = detection_model.predict(enhanced_image)
+                output = yolo_outputs[0]
+                boxes = output.boxes
+                names = output.names
+                
+                # Print detection results
+                for j in range(len(boxes)):
+                    label = names[boxes.cls[j].item()]
+                    coordinates = boxes.xyxy[j].tolist()
+                    confidence = np.round(boxes.conf[j].item(), 2)
+
+                    print(f'Coral {j + 1} is: {label}')
                     print(f'Coordinates are: {coordinates}')
                     print(f'Confidence is: {confidence}')
                     print('-------')

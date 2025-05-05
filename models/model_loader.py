@@ -52,6 +52,12 @@ def load_model(model_id):
             fish_model.to(device)
             fish_model.eval()
             return fish_model
+        
+        elif model_id == "coral_detector":
+            coral_model = YOLO("models/checkpoints/coral_yolov11.pt")
+            coral_model.to(device)
+            coral_model.eval()
+            return coral_model
 
         else:
             raise ValueError(f"Unknown enhancement model identifier: {model_id}")
@@ -90,7 +96,10 @@ def load_detection_model(model_id):
             return fish_model
         
         elif model_id == "coral_detection":
-            pass
+            coral_model = YOLO("models/checkpoints/coral_yolov11.pt")
+            coral_model.to(device)
+            coral_model.eval()
+            return coral_model
 
         else:
             raise ValueError(f"Unknown enhancement model identifier: {model_id}")
