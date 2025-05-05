@@ -51,8 +51,8 @@ def load_model(model_id):
         elif model_id == "cluienet":
             fE = UNetEncoder().to(device)
             fl = UNetDecoder().to(device)
-            fE.load_state_dict(torch.load("models/checkpoints/cluie_fE_latest.pth"))
-            fl.load_state_dict(torch.load("models/checkpoints/cluie_fI_latest.pth"))
+            fE.load_state_dict(torch.load("models/checkpoints/cluie_fE_latest.pth", map_location='cpu'))
+            fl.load_state_dict(torch.load("models/checkpoints/cluie_fI_latest.pth", map_location='cpu'))
             fE.eval()
             fl.eval()
             return fE, fl
