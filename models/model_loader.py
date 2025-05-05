@@ -3,6 +3,7 @@ import sys # <-- Import sys
 import torch
 import streamlit as st
 from ultralytics import YOLO
+from .cluinet import UNetDecoder, UNetEncoder
 
 models_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -39,25 +40,34 @@ def load_model(model_id):
             print("torch.load successful.")
             spectroformer.to(device)
             spectroformer.eval()
-            return spectroformer
+            return spectroformer, None
         
         elif model_id == "phaseformer":
             phaseformer = torch.load("models/checkpoints/phaseformer_UIEB.pth", map_location='cpu')
             phaseformer.to(device)
             phaseformer.eval()
-            return phaseformer
+            return phaseformer, None
+        
+        elif model_id == "cluienet":
+            fE = UNetEncoder().to(device)
+            fl = UNetDecoder().to(device)
+            fE.load_state_dict(torch.load("models/checkpoints/cluie_fE_latest.pth"))
+            fl.load_state_dict(torch.load("models/checkpoints/cluie_fI_latest.pth"))
+            fE.eval()
+            fl.eval()
+            return fE, fl
         
         elif model_id == "fish_detector":
             fish_model = YOLO("models/checkpoints/fish_yolov11.pt")
             fish_model.to(device)
             fish_model.eval()
-            return fish_model
+            return fish_model, None
         
         elif model_id == "coral_detector":
             coral_model = YOLO("models/checkpoints/coral_yolov11.pt")
             coral_model.to(device)
             coral_model.eval()
-            return coral_model
+            return coral_model, None
 
         else:
             raise ValueError(f"Unknown enhancement model identifier: {model_id}")

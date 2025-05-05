@@ -13,6 +13,13 @@ def run_spectroformer(input_tensor, model):
     
     return final_l
 
+def to_img(x,wide,hig):
+    """Convert the tanh (-1 to 1) ranged tensor to image (0 to 1) tensor	"""
+    x = 0.5 * (x + 1)
+    x = x.clamp(0, 1)
+    x = x.view(x.size(0), 3, wide, hig)
+    return x
+
 def process_image(input_image, model_id, output_dir=OUTPUT_DIR):
     """
     Process an input image with the specified model.
@@ -32,7 +39,7 @@ def process_image(input_image, model_id, output_dir=OUTPUT_DIR):
 
         # Load the model
         print(f"Loading model: {model_id}")
-        model = load_model(model_id)
+        model, model_2 = load_model(model_id)
         model.eval()
         
 
@@ -118,6 +125,30 @@ def process_image(input_image, model_id, output_dir=OUTPUT_DIR):
             # Convert tensor to PIL Image
             to_pil_transform = transforms.ToPILImage()
             output_image = to_pil_transform(output_tensor_cpu)
+            print("Converted output tensor to PIL image.")
+        
+        elif model_id == "cluienet":
+            print("Processing with CLUIE-Net...")
+
+            transform_list = [transforms.ToTensor()]
+            transform = transforms.Compose(transform_list)
+            
+            input_tensor = transform(input_image).unsqueeze(0).to(device)
+            
+            with torch.no_grad():
+                print("Running model inference... ")
+                
+                # model is fE (encoder), model_2 is fl (decoder)
+                fE_out, enc_outs = model(input_tensor)
+                # Call the decoder (model_2) with the encoder output and skip connections
+                decoder_output_tensor = model_2(fE_out, enc_outs)
+                # Convert to image range [0, 1] and move to CPU. Shape: [1, C, H, W]
+                output_tensor_processed = to_img(decoder_output_tensor.cpu(), input_tensor.shape[2], input_tensor.shape[3])
+                
+            # Convert tensor to PIL Image
+            to_pil_transform = transforms.ToPILImage()
+            # Remove the batch dimension (dim 0) before converting. Shape becomes [C, H, W]
+            output_image = to_pil_transform(output_tensor_processed.squeeze(0))
             print("Converted output tensor to PIL image.")
             
         elif model_id == "fish_detector":
