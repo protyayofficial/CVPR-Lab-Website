@@ -52,6 +52,7 @@ temp/
 # If you want to track *some* outputs, keep this line and use ! exceptions,
 # e.g., !outputs/my_important_result.png
 outputs/
+enhanced/
 
 # --- Build / Distribution ---
 # Common build/distribution artifacts (may not be strictly needed now, but good practice)
