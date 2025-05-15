@@ -1,5 +1,9 @@
 # Underwater Image Enhancement and Fish/Coral Detection Web Application 
 
+## Disclaimer
+
+This project is developed for CVPR Lab, IIT Ropar
+
 ## Project Description
 
 This project provides a comprehensive solution for enhancing the quality of underwater images and performing fish/coral detection. It leverages various deep learning models and image processing techniques to address the challenges posed by underwater environments, such as color distortion, low contrast, and blurriness. The project includes different models for image enhancement and object detection, offering flexibility and options for various underwater imaging tasks.
