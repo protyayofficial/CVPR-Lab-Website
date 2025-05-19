@@ -58,13 +58,13 @@ def display_results(input_image, selected_enhancement_models, selected_detection
                     
                     with col1:
                         # Original image
-                        st.image(input_image, caption="Original Image", use_column_width=True)
+                        st.image(input_image, caption="Original Image", use_container_width=True)
                     
                     with col2:
                         # Enhanced image
                         if os.path.exists(result_path):
                             result_image = Image.open(result_path)
-                            st.image(result_image, caption=f"{model_name} Result", use_column_width=True)
+                            st.image(result_image, caption=f"{model_name} Result", use_container_width=True)
                             
                             # Add download button for the enhanced image
                             with open(result_path, "rb") as file:
@@ -112,12 +112,12 @@ def display_results(input_image, selected_enhancement_models, selected_detection
                             col1, col2 = st.columns(2)
                             
                             with col1:
-                                st.image(enhanced_image, caption=f"Enhanced with {enhancement_model}", use_column_width=True)
+                                st.image(enhanced_image, caption=f"Enhanced with {enhancement_model}", use_container_width=True)
                             
                             with col2:
                                 st.image(detection_result_image, 
                                          caption=f"{detection_model_name} on {enhancement_model}", 
-                                         use_column_width=True)
+                                         use_container_width=True)
                                 
                                 # Add download button for the detection result
                                 with open(detection_result_path, "rb") as file:
