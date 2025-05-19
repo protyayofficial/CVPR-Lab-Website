@@ -1,7 +1,6 @@
 import streamlit as st
 import os
 from PIL import Image
-import numpy as np
 from utils.image_utils import save_uploaded_image
 
 def image_uploader():
